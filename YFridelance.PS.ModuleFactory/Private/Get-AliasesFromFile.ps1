@@ -52,16 +52,16 @@ function Get-AliasesFromFile {
 
         # Pattern: optional leading whitespace, # Alias: <values>
         $AliasPattern = '(?m)^\s*#\s*Alias\s*:\s*(.+)\s*$'
-        $Matches      = [System.Text.RegularExpressions.Regex]::Matches($FileContent, $AliasPattern)
+        $AliasMatches      = [System.Text.RegularExpressions.Regex]::Matches($FileContent, $AliasPattern)
 
-        if ($Matches.Count -eq 0) {
+        if ($AliasMatches.Count -eq 0) {
             Write-Verbose "Get-AliasesFromFile: No alias annotations found in '$FilePath'."
             return [string[]]@()
         }
 
         $AliasNames = [System.Collections.Generic.List[string]]::new()
 
-        foreach ($Match in $Matches) {
+        foreach ($Match in $AliasMatches) {
             $RawValue = $Match.Groups[1].Value.Trim()
             Write-Verbose "  Found alias annotation value: '$RawValue'"
 

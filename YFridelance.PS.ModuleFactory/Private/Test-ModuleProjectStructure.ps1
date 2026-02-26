@@ -1,4 +1,4 @@
-function Test-ModuleProjectStructure {
+﻿function Test-ModuleProjectStructure {
     <#
     .SYNOPSIS
         Validates the structure of a PowerShell module project directory.

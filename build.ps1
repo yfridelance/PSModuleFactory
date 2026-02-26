@@ -20,7 +20,9 @@
 #>
 [CmdletBinding()]
 param(
-    [switch]$Clean
+    [switch]$Clean,
+
+    [string]$Prerelease
 )
 
 $ErrorActionPreference = 'Stop'
@@ -52,6 +54,14 @@ if ($Result.Success) {
     Write-Host "  Functions: $($Result.FunctionsExported -join ', ')" -ForegroundColor Green
     Write-Host "  Aliases:   $($Result.AliasesExported -join ', ')" -ForegroundColor Green
     Write-Host "  Files:     $($Result.FilesMerged) files merged" -ForegroundColor Green
+    if ($Prerelease) {
+        # Dot-source the private helper (not exported by the module)
+        . (Join-Path -Path $ModulePath -ChildPath (Join-Path -Path 'Private' -ChildPath 'Update-ManifestField.ps1'))
+        $Script:DefaultEncoding = [System.Text.UTF8Encoding]::new($true)
+        $BuiltManifestPath = Join-Path -Path $OutputPath -ChildPath 'YFridelance.PS.ModuleFactory.psd1'
+        Update-ManifestField -ManifestPath $BuiltManifestPath -FieldName 'Prerelease' -Value $Prerelease
+        Write-Host "  Prerelease: $Prerelease" -ForegroundColor Green
+    }
 }
 else {
     Write-Host "`nBuild failed!" -ForegroundColor Red

@@ -1,4 +1,4 @@
-function Get-FunctionNamesFromFile {
+﻿function Get-FunctionNamesFromFile {
     <#
     .SYNOPSIS
         Extracts the names of all top-level function definitions from a PowerShell script file.

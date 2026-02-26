@@ -2,34 +2,63 @@ name: Build & Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
-  test-and-build:
-    name: Test & Build
+  test:
+    name: Test (${{ matrix.os }} / ${{ matrix.shell }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             shell: pwsh
           - os: windows-latest
             shell: pwsh
+          - os: windows-latest
+            shell: powershell
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache PowerShell modules
+        uses: actions/cache@v4
+        id: ps-cache
+        with:
+          path: |
+            ~/.local/share/powershell/Modules
+            ~/Documents/PowerShell/Modules
+            ~/Documents/WindowsPowerShell/Modules
+          key: ps-modules-${{ matrix.os }}-${{ matrix.shell }}-pester5-pssa
+
       - name: Install Pester
-        shell: pwsh
+        if: steps.ps-cache.outputs.cache-hit != 'true'
+        shell: ${{ matrix.shell }}
         run: |
           Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
 
+      - name: Install PSScriptAnalyzer
+        if: steps.ps-cache.outputs.cache-hit != 'true'
+        shell: ${{ matrix.shell }}
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Run PSScriptAnalyzer
+        shell: ${{ matrix.shell }}
+        run: |
+          $Results = Invoke-ScriptAnalyzer -Path './YFridelance.PS.ModuleFactory' -Recurse -Settings './PSScriptAnalyzerSettings.psd1' -ReportSummary
+          if ($Results) {
+              $Results | Format-Table -AutoSize
+              throw "PSScriptAnalyzer found $($Results.Count) issue(s)."
+          }
+          Write-Host "PSScriptAnalyzer: No issues found." -ForegroundColor Green
+
       - name: Run Pester tests
-        shell: pwsh
+        shell: ${{ matrix.shell }}
         run: |
           $PesterConfig = New-PesterConfiguration
           $PesterConfig.Run.Path = './Tests'
@@ -40,9 +69,63 @@ jobs:
           $PesterConfig.TestResult.OutputFormat = 'NUnitXml'
           Invoke-Pester -Configuration $PesterConfig
 
-      - name: Build module (dogfooding)
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.shell }}
+          path: ./TestResults.xml
+
+  build-and-publish:
+    name: Build & Publish
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache PowerShell modules
+        uses: actions/cache@v4
+        id: ps-cache
+        with:
+          path: |
+            ~/.local/share/powershell/Modules
+          key: ps-modules-ubuntu-latest-pwsh-pester5
+
+      - name: Install Pester
+        if: steps.ps-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Build module
         shell: pwsh
         run: ./build.ps1 -Clean
+
+      - name: Set prerelease tag
+        if: github.ref == 'refs/heads/develop'
+        shell: pwsh
+        run: |
+          . ./YFridelance.PS.ModuleFactory/Private/Update-ManifestField.ps1
+          $Script:DefaultEncoding = [System.Text.UTF8Encoding]::new($true)
+          $ManifestPath = './dist/YFridelance.PS.ModuleFactory/YFridelance.PS.ModuleFactory.psd1'
+          $PrereleaseTag = "preview$($env:GITHUB_RUN_NUMBER)"
+          Update-ManifestField -ManifestPath $ManifestPath -FieldName 'Prerelease' -Value $PrereleaseTag
+          Write-Host "Prerelease tag set: $PrereleaseTag" -ForegroundColor Green
+
+      - name: Ensure no prerelease tag
+        if: github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          . ./YFridelance.PS.ModuleFactory/Private/Update-ManifestField.ps1
+          $Script:DefaultEncoding = [System.Text.UTF8Encoding]::new($true)
+          $ManifestPath = './dist/YFridelance.PS.ModuleFactory/YFridelance.PS.ModuleFactory.psd1'
+          Update-ManifestField -ManifestPath $ManifestPath -FieldName 'Prerelease' -Value ''
+          Write-Host "Prerelease tag cleared for stable release." -ForegroundColor Green
 
       - name: Verify build output
         shell: pwsh
@@ -52,32 +135,37 @@ jobs:
               throw "Build output not found: $ManifestPath"
           }
           $Manifest = Test-ModuleManifest -Path $ManifestPath
+          $Prerelease = $Manifest.PrivateData.PSData.Prerelease
           Write-Host "Module: $($Manifest.Name)"
           Write-Host "Version: $($Manifest.Version)"
+          if ($Prerelease) { Write-Host "Prerelease: $Prerelease" }
           Write-Host "Functions: $($Manifest.ExportedFunctions.Keys -join ', ')"
 
       - name: Upload build artifact
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: YFridelance.PS.ModuleFactory
           path: ./dist/YFridelance.PS.ModuleFactory/
 
       - name: Publish to PowerShell Gallery
-        if: matrix.os == 'ubuntu-latest' && github.event_name == 'push'
         shell: pwsh
         env:
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+          DOTNET_CLI_UI_LANGUAGE: en
         run: |
           $ModulePath = './dist/YFridelance.PS.ModuleFactory'
           if (-not (Test-Path $ModulePath)) {
               throw "Build output not found: $ModulePath"
           }
-          Publish-Module -Path $ModulePath -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery 
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.os }}
-          path: ./TestResults.xml
+          try {
+              Publish-Module -Path $ModulePath -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery -ErrorAction Stop
+              Write-Host "Published successfully to PSGallery." -ForegroundColor Green
+          }
+          catch {
+              if ($_.Exception.Message -match '409|already exists|duplicate') {
+                  Write-Warning "Module version already exists on PSGallery. Skipping publish."
+              }
+              else {
+                  throw
+              }
+          }

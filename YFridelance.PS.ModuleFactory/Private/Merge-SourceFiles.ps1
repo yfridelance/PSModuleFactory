@@ -1,4 +1,4 @@
-function Merge-SourceFiles {
+﻿function Merge-SourceFiles {
     <#
     .SYNOPSIS
         Merges ordered PowerShell source files into a single monolithic script string.
