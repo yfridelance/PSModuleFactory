@@ -129,6 +129,8 @@ jobs:
     needs: [test-pwsh, test-ps51]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -217,3 +219,22 @@ jobs:
                   throw
               }
           }
+
+      - name: Create git version tag
+        shell: pwsh
+        run: |
+          $ManifestPath = './dist/YFridelance.PS.ModuleFactory/YFridelance.PS.ModuleFactory.psd1'
+          $Manifest = Test-ModuleManifest -Path $ManifestPath
+          $Version = $Manifest.Version.ToString()
+          $Prerelease = $Manifest.PrivateData.PSData.Prerelease
+          if ($Prerelease) {
+              $Tag = "v$Version-$Prerelease"
+          }
+          else {
+              $Tag = "v$Version"
+          }
+          Write-Host "Creating tag: $Tag" -ForegroundColor Green
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a $Tag -m "Release $Tag"
+          git push origin $Tag
