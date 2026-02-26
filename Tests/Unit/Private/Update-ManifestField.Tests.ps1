@@ -161,9 +161,19 @@ Describe 'Update-ManifestField' {
         BeforeEach {
             # Create a fresh copy for each test
             Copy-Item -Path $Script:RefManifestPath -Destination $Script:PrereleaseManifestPath -Force
-            # Uncomment the Prerelease field so Update-ManifestField can locate and replace it
+            # Ensure the Prerelease field exists and is uncommented.
+            # PS 5.1 New-ModuleManifest may not generate the Prerelease field at all.
             $Content = [System.IO.File]::ReadAllText($Script:PrereleaseManifestPath, [System.Text.Encoding]::UTF8)
-            $Content = $Content -replace '# Prerelease = ''''', 'Prerelease = '''''
+            if ($Content -match '# Prerelease = ') {
+                # PS 7+: uncomment the existing field
+                $Content = $Content -replace '# Prerelease = ''''', 'Prerelease = '''''
+            }
+            elseif ($Content -notmatch '\bPrerelease\s*=') {
+                # PS 5.1: field missing entirely, inject into PSData section
+                $PsdMarker = '    } # End of PSData hashtable'
+                $Injection = "        Prerelease = ''" + "`r`n" + "`r`n" + $PsdMarker
+                $Content = $Content.Replace($PsdMarker, $Injection)
+            }
             [System.IO.File]::WriteAllText($Script:PrereleaseManifestPath, $Content, [System.Text.UTF8Encoding]::new($true))
         }
 
