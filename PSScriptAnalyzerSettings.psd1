@@ -2,5 +2,6 @@
     ExcludeRules = @(
         'PSUseShouldProcessForStateChangingFunctions'
         'PSUseSingularNouns'
+        'PSUseApprovedVerbs'
     )
 }
