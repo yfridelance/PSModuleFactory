@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 BeforeAll {
-    $ModulePath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath 'yvfrii.PS.ModuleFactory')))
+    $ModulePath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath 'YFridelance.PS.ModuleFactory')))
     Import-Module -Name $ModulePath -Force
 
     # Fixture path
@@ -36,12 +36,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('abc1234 feat: add new feature')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             $Result = Update-PSModuleVersion -Path $WorkDir -Confirm:$false
         }
@@ -72,12 +72,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('def5678 fix: correct null reference issue')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             $Result = Update-PSModuleVersion -Path $WorkDir -Confirm:$false
         }
@@ -104,12 +104,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('a1b2c3d feat!: remove legacy API')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             $Result = Update-PSModuleVersion -Path $WorkDir -Confirm:$false
         }
@@ -141,12 +141,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('e4f5a6b fix: small patch')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             # Override: force Major even though commits only warrant Patch
             $Result = Update-PSModuleVersion -Path $WorkDir -BumpType Major -Confirm:$false
@@ -174,12 +174,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('c7d8e9f feat: new feature')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             $Result = Update-PSModuleVersion -Path $WorkDir -WhatIf
         }
@@ -206,7 +206,7 @@ Describe 'Update-PSModuleVersion' {
         It 'should throw when git is not available on PATH' {
             Mock -CommandName 'Get-Command' -ParameterFilter { $Name -eq 'git' } -MockWith {
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             {
                 Update-PSModuleVersion -Path $Script:SampleModulePath -Confirm:$false -ErrorAction Stop
@@ -227,12 +227,12 @@ Describe 'Update-PSModuleVersion' {
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'describe' } -MockWith {
                 $global:LASTEXITCODE = 1
                 return $null
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             Mock -CommandName 'git' -ParameterFilter { $args -contains 'log' } -MockWith {
                 $global:LASTEXITCODE = 0
                 return @('f1a2b3c fix: test fix')
-            } -ModuleName 'yvfrii.PS.ModuleFactory'
+            } -ModuleName 'YFridelance.PS.ModuleFactory'
 
             $Result = Update-PSModuleVersion -Path $WorkDir -Confirm:$false
         }

@@ -2,16 +2,16 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Builds yvfrii.PS.ModuleFactory using itself (dogfooding).
+    Builds YFridelance.PS.ModuleFactory using itself (dogfooding).
 
 .DESCRIPTION
-    This script imports the dev version of yvfrii.PS.ModuleFactory and uses
+    This script imports the dev version of YFridelance.PS.ModuleFactory and uses
     Build-PSModule to create the distributable version in ./dist/.
 
 .EXAMPLE
     ./build.ps1
 
-    Builds the module to ./dist/yvfrii.PS.ModuleFactory/
+    Builds the module to ./dist/YFridelance.PS.ModuleFactory/
 
 .EXAMPLE
     ./build.ps1 -Clean
@@ -26,12 +26,12 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Import the dev version of the module
-$ModulePath = Join-Path -Path $PSScriptRoot -ChildPath 'yvfrii.PS.ModuleFactory'
+$ModulePath = Join-Path -Path $PSScriptRoot -ChildPath 'YFridelance.PS.ModuleFactory'
 Write-Host "Importing module from: $ModulePath" -ForegroundColor Cyan
 Import-Module -Name $ModulePath -Force -Verbose:$false
 
 # Build the module
-$OutputPath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path 'dist' -ChildPath 'yvfrii.PS.ModuleFactory')
+$OutputPath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path 'dist' -ChildPath 'YFridelance.PS.ModuleFactory')
 
 $BuildParams = @{
     Path       = $ModulePath
@@ -43,7 +43,7 @@ if ($Clean) {
     $BuildParams['Clean'] = $true
 }
 
-Write-Host "`nBuilding yvfrii.PS.ModuleFactory..." -ForegroundColor Cyan
+Write-Host "`nBuilding YFridelance.PS.ModuleFactory..." -ForegroundColor Cyan
 $Result = Build-PSModule @BuildParams
 
 if ($Result.Success) {

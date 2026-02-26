@@ -87,7 +87,7 @@ baseline for commit analysis) and creating new tags.
 
 ## Output
 
-`[PSCustomObject]` with PSTypeName `yvfrii.PS.ModuleFactory.VersionResult`
+`[PSCustomObject]` with PSTypeName `YFridelance.PS.ModuleFactory.VersionResult`
 
 | Property | Type | Description |
 |---|---|---|

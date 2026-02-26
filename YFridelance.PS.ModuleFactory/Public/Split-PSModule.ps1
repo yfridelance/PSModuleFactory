@@ -36,7 +36,7 @@
         progress output for each operation.
 
     .OUTPUTS
-        [PSCustomObject] with PSTypeName 'yvfrii.PS.ModuleFactory.SplitResult'
+        [PSCustomObject] with PSTypeName 'YFridelance.PS.ModuleFactory.SplitResult'
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     [OutputType([PSCustomObject])]
@@ -265,7 +265,7 @@
     # Step 8: Return SplitResult
     # -------------------------------------------------------------------------
     $SplitResult = [PSCustomObject]@{
-        PSTypeName       = 'yvfrii.PS.ModuleFactory.SplitResult'
+        PSTypeName       = 'YFridelance.PS.ModuleFactory.SplitResult'
         ModuleName       = $ModuleName
         ModulePath       = $Path
         PublicFunctions  = [string[]]$PublicFunctions

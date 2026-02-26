@@ -52,7 +52,7 @@
         prefix, and prints verbose progress.
 
     .OUTPUTS
-        [PSCustomObject] with PSTypeName 'yvfrii.PS.ModuleFactory.VersionResult'
+        [PSCustomObject] with PSTypeName 'YFridelance.PS.ModuleFactory.VersionResult'
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     [OutputType([PSCustomObject])]
@@ -245,7 +245,7 @@
     if (-not $EffectiveBumpType) {
         Write-Warning "No version bump detected from commit analysis and -BumpType not specified. No version change will be made."
         $VersionResult = [PSCustomObject]@{
-            PSTypeName      = 'yvfrii.PS.ModuleFactory.VersionResult'
+            PSTypeName      = 'YFridelance.PS.ModuleFactory.VersionResult'
             ModuleName      = $ModuleName
             ManifestPath    = $ManifestPath
             PreviousVersion = $CurrentVersion
@@ -347,7 +347,7 @@
     # Step 10: Return VersionResult
     # -------------------------------------------------------------------------
     $VersionResult = [PSCustomObject]@{
-        PSTypeName      = 'yvfrii.PS.ModuleFactory.VersionResult'
+        PSTypeName      = 'YFridelance.PS.ModuleFactory.VersionResult'
         ModuleName      = $ModuleName
         ManifestPath    = $ManifestPath
         PreviousVersion = $CurrentVersion

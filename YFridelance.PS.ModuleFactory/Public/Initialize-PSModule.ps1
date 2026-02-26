@@ -49,7 +49,7 @@
         Creates Acme.Tools with custom author, description, version, and Apache-2.0 license URI.
 
     .OUTPUTS
-        [PSCustomObject] with PSTypeName 'yvfrii.PS.ModuleFactory.ScaffoldResult'
+        [PSCustomObject] with PSTypeName 'YFridelance.PS.ModuleFactory.ScaffoldResult'
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     [OutputType([PSCustomObject])]
@@ -233,7 +233,7 @@
     # Step 6: Return ScaffoldResult
     # -------------------------------------------------------------------------
     $ScaffoldResult = [PSCustomObject]@{
-        PSTypeName         = 'yvfrii.PS.ModuleFactory.ScaffoldResult'
+        PSTypeName         = 'YFridelance.PS.ModuleFactory.ScaffoldResult'
         ModuleName         = $ModuleName
         ModulePath         = $ModulePath
         ManifestPath       = $ManifestPath

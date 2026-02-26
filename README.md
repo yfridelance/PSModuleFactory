@@ -1,11 +1,11 @@
-# yvfrii.PS.ModuleFactory
+# YFridelance.PS.ModuleFactory
 
 A PowerShell module that helps developers build, package, and manage other PowerShell modules.
 PSModuleFactory covers the full module lifecycle: scaffold a new module from scratch, develop with
 individual source files, build a distributable single-file package, and automate semantic versioning
 from Git commit history.
 
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/yvfrii.PS.ModuleFactory?label=PSGallery)](https://www.powershellgallery.com/packages/yvfrii.PS.ModuleFactory)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/YFridelance.PS.ModuleFactory?label=PSGallery)](https://www.powershellgallery.com/packages/YFridelance.PS.ModuleFactory)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/yfridelance/PSModuleFactory/actions/workflows/build.yml/badge.svg)](https://github.com/yfridelance/PSModuleFactory/actions/workflows/build.yml)
 
@@ -16,8 +16,8 @@ from Git commit history.
 ### Install
 
 ```powershell
-Install-Module -Name yvfrii.PS.ModuleFactory -Scope CurrentUser
-Import-Module yvfrii.PS.ModuleFactory
+Install-Module -Name YFridelance.PS.ModuleFactory -Scope CurrentUser
+Import-Module YFridelance.PS.ModuleFactory
 ```
 
 ### Initialize a new module
@@ -141,9 +141,9 @@ File naming conventions:
 ```
 PSModuleFactory/                              # Repository root
 |
-+-- yvfrii.PS.ModuleFactory/                  # Module source
-|   +-- yvfrii.PS.ModuleFactory.psd1          # Module manifest
-|   +-- yvfrii.PS.ModuleFactory.psm1          # Dev dot-source loader
++-- YFridelance.PS.ModuleFactory/                  # Module source
+|   +-- YFridelance.PS.ModuleFactory.psd1          # Module manifest
+|   +-- YFridelance.PS.ModuleFactory.psm1          # Dev dot-source loader
 |   +-- Public/                               # Four exported functions
 |   |   +-- Build-PSModule.ps1
 |   |   +-- Initialize-PSModule.ps1

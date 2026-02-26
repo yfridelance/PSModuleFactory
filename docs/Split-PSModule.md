@@ -66,7 +66,7 @@ error for that specific file, and the file is skipped. Other files continue to b
 
 ## Output
 
-`[PSCustomObject]` with PSTypeName `yvfrii.PS.ModuleFactory.SplitResult`
+`[PSCustomObject]` with PSTypeName `YFridelance.PS.ModuleFactory.SplitResult`
 
 | Property | Type | Description |
 |---|---|---|

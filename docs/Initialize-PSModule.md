@@ -121,7 +121,7 @@ Specify `'None'` to omit `LicenseUri` entirely.
 
 ## Output
 
-`[PSCustomObject]` with PSTypeName `yvfrii.PS.ModuleFactory.ScaffoldResult`
+`[PSCustomObject]` with PSTypeName `YFridelance.PS.ModuleFactory.ScaffoldResult`
 
 | Property | Type | Description |
 |---|---|---|

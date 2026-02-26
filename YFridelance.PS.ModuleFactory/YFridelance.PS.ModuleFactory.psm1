@@ -1,5 +1,5 @@
 ﻿#
-# Module: yvfrii.PS.ModuleFactory
+# Module: YFridelance.PS.ModuleFactory
 # Development loader - dot-sources all individual function files.
 # For distribution, use Build-PSModule to merge into a single file.
 #

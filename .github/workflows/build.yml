@@ -47,7 +47,7 @@ jobs:
       - name: Verify build output
         shell: pwsh
         run: |
-          $ManifestPath = './dist/yvfrii.PS.ModuleFactory/yvfrii.PS.ModuleFactory.psd1'
+          $ManifestPath = './dist/YFridelance.PS.ModuleFactory/YFridelance.PS.ModuleFactory.psd1'
           if (-not (Test-Path $ManifestPath)) {
               throw "Build output not found: $ManifestPath"
           }
@@ -60,8 +60,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: yvfrii.PS.ModuleFactory
-          path: ./dist/yvfrii.PS.ModuleFactory/
+          name: YFridelance.PS.ModuleFactory
+          path: ./dist/YFridelance.PS.ModuleFactory/
 
       - name: Upload test results
         if: always()
