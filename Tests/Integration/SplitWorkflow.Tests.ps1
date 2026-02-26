@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 BeforeAll {
-    $ModulePath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath 'yvfrii.PS.ModuleFactory'))
+    $ModulePath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path '..' -ChildPath (Join-Path -Path '..' -ChildPath 'YFridelance.PS.ModuleFactory'))
     Import-Module -Name $ModulePath -Force
 
     # Fixture path

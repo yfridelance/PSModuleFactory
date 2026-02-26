@@ -72,7 +72,7 @@ remain from a previous build.
 
 ## Output
 
-`[PSCustomObject]` with PSTypeName `yvfrii.PS.ModuleFactory.BuildResult`
+`[PSCustomObject]` with PSTypeName `YFridelance.PS.ModuleFactory.BuildResult`
 
 | Property | Type | Description |
 |---|---|---|

@@ -38,7 +38,7 @@
         C:\Artifacts\MyModule first, then writes the build result there with verbose progress output.
 
     .OUTPUTS
-        [PSCustomObject] with PSTypeName 'yvfrii.PS.ModuleFactory.BuildResult'
+        [PSCustomObject] with PSTypeName 'YFridelance.PS.ModuleFactory.BuildResult'
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     [OutputType([PSCustomObject])]
@@ -295,7 +295,7 @@
     # Step 13: Return BuildResult
     # -------------------------------------------------------------------------
     $BuildResult = [PSCustomObject]@{
-        PSTypeName        = 'yvfrii.PS.ModuleFactory.BuildResult'
+        PSTypeName        = 'YFridelance.PS.ModuleFactory.BuildResult'
         ModuleName        = $ModuleName
         SourcePath        = $AbsSourcePath
         OutputPath        = $OutputPath
