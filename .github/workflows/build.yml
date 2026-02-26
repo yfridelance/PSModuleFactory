@@ -73,7 +73,7 @@ jobs:
           if (-not (Test-Path $ModulePath)) {
               throw "Build output not found: $ModulePath"
           }
-          Publish-Module -Path $ModulePath -ApiKey $env:PSGALLERY_API_KEY -Repository PSGallery 
+          Publish-Module -Path $ModulePath -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery 
 
       - name: Upload test results
         if: always()
