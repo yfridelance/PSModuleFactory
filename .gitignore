@@ -1,0 +1,21 @@
+# Build output
+dist/
+
+# Backup files
+*.bak
+*.tmp
+
+# PowerShell module analysis
+PSScriptAnalyzer*.xml
+
+# IDE
+.vscode/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Claude Code
+.claude/worktrees/
