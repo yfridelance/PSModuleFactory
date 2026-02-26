@@ -152,4 +152,56 @@ Describe 'Update-ManifestField' {
             $Data.AliasesToExport | Should -Contain 'al2'
         }
     }
+
+    Context 'Scalar field - Prerelease (nested in PSData)' {
+        BeforeAll {
+            $Script:PrereleaseManifestPath = Join-Path -Path $Script:TempDir -ChildPath 'PrereleaseTest.psd1'
+        }
+
+        BeforeEach {
+            # Create a fresh copy for each test
+            Copy-Item -Path $Script:RefManifestPath -Destination $Script:PrereleaseManifestPath -Force
+            # Uncomment the Prerelease field so Update-ManifestField can locate and replace it
+            $Content = [System.IO.File]::ReadAllText($Script:PrereleaseManifestPath, [System.Text.Encoding]::UTF8)
+            $Content = $Content -replace '# Prerelease = ''''', 'Prerelease = '''''
+            [System.IO.File]::WriteAllText($Script:PrereleaseManifestPath, $Content, [System.Text.UTF8Encoding]::new($true))
+        }
+
+        It 'should set Prerelease to a preview string' {
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'preview1'
+            $Data = Import-PowerShellDataFile -Path $Script:PrereleaseManifestPath
+            $Data.PrivateData.PSData.Prerelease | Should -Be 'preview1'
+        }
+
+        It 'should clear Prerelease by setting to empty string' {
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'preview1'
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value ''
+            $Data = Import-PowerShellDataFile -Path $Script:PrereleaseManifestPath
+            $Data.PrivateData.PSData.Prerelease | Should -Be ''
+        }
+
+        It 'should handle hyphenated prerelease strings' {
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'beta-1'
+            $Data = Import-PowerShellDataFile -Path $Script:PrereleaseManifestPath
+            $Data.PrivateData.PSData.Prerelease | Should -Be 'beta-1'
+        }
+
+        It 'should preserve other manifest fields when updating Prerelease' {
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'preview1'
+            $Data = Import-PowerShellDataFile -Path $Script:PrereleaseManifestPath
+            # Verify Prerelease was updated
+            $Data.PrivateData.PSData.Prerelease | Should -Be 'preview1'
+            # Verify top-level fields are preserved
+            $Data.ModuleVersion | Should -Be '1.0.0'
+            $Data.Author | Should -Be 'TestAuthor'
+            $Data.RootModule | Should -Be 'RefModule.psm1'
+        }
+
+        It 'should update Prerelease when it already has a value' {
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'alpha1'
+            Update-ManifestField -ManifestPath $Script:PrereleaseManifestPath -FieldName 'Prerelease' -Value 'beta2'
+            $Data = Import-PowerShellDataFile -Path $Script:PrereleaseManifestPath
+            $Data.PrivateData.PSData.Prerelease | Should -Be 'beta2'
+        }
+    }
 }

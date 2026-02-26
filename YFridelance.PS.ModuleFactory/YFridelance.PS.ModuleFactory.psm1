@@ -14,6 +14,7 @@ $Script:SupportedManifestFields = @(
     'ModuleVersion'
     'Description'
     'Author'
+    'Prerelease'
 )
 $Script:DefaultEncoding = [System.Text.UTF8Encoding]::new($true)
 $Script:LoadOrderFolders = @('Enums', 'Classes', 'Private', 'Public')

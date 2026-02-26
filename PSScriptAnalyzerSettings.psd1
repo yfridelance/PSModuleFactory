@@ -1,0 +1,6 @@
+@{
+    ExcludeRules = @(
+        'PSUseShouldProcessForStateChangingFunctions'
+        'PSUseSingularNouns'
+    )
+}

@@ -1,4 +1,4 @@
-function Update-ManifestField {
+﻿function Update-ManifestField {
     <#
     .SYNOPSIS
         Updates a single field in a PowerShell module manifest (.psd1) file in place.
@@ -20,6 +20,9 @@ function Update-ManifestField {
         Scalar fields (ModuleVersion, Description, Author):
         - Written as 'value' (single-quoted string).
 
+        Prerelease is handled as a scalar field within the PrivateData.PSData section.
+        Only alphanumeric characters and hyphens are valid for PSGallery prerelease strings.
+
         The file is written back with UTF-8 BOM encoding and CRLF line endings.
 
     .PARAMETER ManifestPath
@@ -27,7 +30,7 @@ function Update-ManifestField {
 
     .PARAMETER FieldName
         The manifest field to update. Must be one of:
-        FunctionsToExport, AliasesToExport, ModuleVersion, Description, Author.
+        FunctionsToExport, AliasesToExport, ModuleVersion, Description, Author, Prerelease.
 
     .PARAMETER Value
         The new value for the field. For array fields, pass a [string[]] or [object[]].
@@ -43,6 +46,11 @@ function Update-ManifestField {
         Update-ManifestField -ManifestPath 'C:\MyModule\MyModule.psd1' `
                              -FieldName 'FunctionsToExport' `
                              -Value $Functions
+
+    .EXAMPLE
+        Update-ManifestField -ManifestPath 'C:\MyModule\MyModule.psd1' `
+                             -FieldName 'Prerelease' `
+                             -Value 'beta1'
     #>
     [CmdletBinding()]
     [OutputType([void])]
@@ -52,7 +60,7 @@ function Update-ManifestField {
         [string]$ManifestPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('FunctionsToExport', 'AliasesToExport', 'ModuleVersion', 'Description', 'Author')]
+        [ValidateSet('FunctionsToExport', 'AliasesToExport', 'ModuleVersion', 'Description', 'Author', 'Prerelease')]
         [string]$FieldName,
 
         [Parameter(Mandatory = $true)]
@@ -114,6 +122,12 @@ function Update-ManifestField {
     }
 
     Write-Verbose "  New value string: $ValueString"
+
+    # Validate Prerelease value for PSGallery compatibility
+    if ($FieldName -eq 'Prerelease' -and $Value -ne '' -and $Value -match '[^a-zA-Z0-9-]') {
+        Write-Warning ("Update-ManifestField: Prerelease value '$Value' contains characters not supported by PSGallery. " +
+                       "Only alphanumeric characters and hyphens are allowed.")
+    }
 
     # Regex pattern to match the field and its current value in the .psd1
     # Handles:

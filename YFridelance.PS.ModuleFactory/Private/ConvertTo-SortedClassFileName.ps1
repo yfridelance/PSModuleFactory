@@ -1,4 +1,4 @@
-function ConvertTo-SortedClassFileName {
+﻿function ConvertTo-SortedClassFileName {
     <#
     .SYNOPSIS
         Converts a class name and sort index into a standardised, numerically-prefixed class file name.

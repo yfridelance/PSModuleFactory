@@ -1,4 +1,4 @@
-function New-DevPsm1Content {
+﻿function New-DevPsm1Content {
     <#
     .SYNOPSIS
         Generates the content for a development .psm1 file that dot-sources all source files dynamically.

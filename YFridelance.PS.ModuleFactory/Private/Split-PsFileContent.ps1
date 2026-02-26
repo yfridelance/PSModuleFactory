@@ -1,4 +1,4 @@
-function Split-PsFileContent {
+﻿function Split-PsFileContent {
     <#
     .SYNOPSIS
         Parses a PowerShell file and splits its content into typed, named segments.
