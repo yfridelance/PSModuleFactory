@@ -210,7 +210,7 @@ jobs:
               Write-Host "Published successfully to PSGallery." -ForegroundColor Green
           }
           catch {
-              if ($_.Exception.Message -match '409|already exists|duplicate') {
+              if ($_.Exception.Message -match '409|already exists|duplicate|version must exceed') {
                   Write-Warning "Module version already exists on PSGallery. Skipping publish."
               }
               else {
