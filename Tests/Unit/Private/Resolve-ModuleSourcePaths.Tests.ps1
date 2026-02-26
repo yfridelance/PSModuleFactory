@@ -112,7 +112,8 @@ Describe 'Resolve-ModuleSourcePaths' {
 
             # Create only a Public dir, no Enums/Classes/Private
             New-Item -Path (Join-Path $TempRoot 'Public') -ItemType Directory -Force | Out-Null
-            Set-Content -Path (Join-Path $TempRoot 'Public' 'Test-Func.ps1') -Value 'function Test-Func { }'
+            $PublicDir = Join-Path -Path $TempRoot -ChildPath 'Public'
+            Set-Content -Path (Join-Path -Path $PublicDir -ChildPath 'Test-Func.ps1') -Value 'function Test-Func { }'
 
             $Result = Resolve-ModuleSourcePaths -ModuleRoot $TempRoot
         }
