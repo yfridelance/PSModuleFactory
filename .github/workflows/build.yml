@@ -7,17 +7,16 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  test:
-    name: Test (${{ matrix.os }} / ${{ matrix.shell }})
+  test-pwsh:
+    name: Test (pwsh / ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: pwsh
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        shell: [pwsh]
-        include:
-          - os: windows-latest
-            shell: powershell
 
     steps:
       - name: Checkout repository
@@ -30,23 +29,19 @@ jobs:
           path: |
             ~/.local/share/powershell/Modules
             ~/Documents/PowerShell/Modules
-            ~/Documents/WindowsPowerShell/Modules
-          key: ps-modules-${{ matrix.os }}-${{ matrix.shell }}-pester5-pssa
+          key: ps-modules-${{ matrix.os }}-pwsh-pester5-pssa
 
       - name: Install Pester
         if: steps.ps-cache.outputs.cache-hit != 'true'
-        shell: ${{ matrix.shell }}
         run: |
           Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
 
       - name: Install PSScriptAnalyzer
         if: steps.ps-cache.outputs.cache-hit != 'true'
-        shell: ${{ matrix.shell }}
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
 
       - name: Run PSScriptAnalyzer
-        shell: ${{ matrix.shell }}
         run: |
           $Results = Invoke-ScriptAnalyzer -Path './YFridelance.PS.ModuleFactory' -Recurse -Settings './PSScriptAnalyzerSettings.psd1' -ReportSummary
           if ($Results) {
@@ -56,7 +51,6 @@ jobs:
           Write-Host "PSScriptAnalyzer: No issues found." -ForegroundColor Green
 
       - name: Run Pester tests
-        shell: ${{ matrix.shell }}
         run: |
           $PesterConfig = New-PesterConfiguration
           $PesterConfig.Run.Path = './Tests'
@@ -71,12 +65,68 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.shell }}
+          name: test-results-${{ matrix.os }}-pwsh
+          path: ./TestResults.xml
+
+  test-ps51:
+    name: Test (PowerShell 5.1 / windows-latest)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache PowerShell modules
+        uses: actions/cache@v4
+        id: ps-cache
+        with:
+          path: |
+            ~/Documents/WindowsPowerShell/Modules
+          key: ps-modules-windows-latest-ps51-pester5-pssa
+
+      - name: Install Pester
+        if: steps.ps-cache.outputs.cache-hit != 'true'
+        run: |
+          Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Install PSScriptAnalyzer
+        if: steps.ps-cache.outputs.cache-hit != 'true'
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Run PSScriptAnalyzer
+        run: |
+          $Results = Invoke-ScriptAnalyzer -Path './YFridelance.PS.ModuleFactory' -Recurse -Settings './PSScriptAnalyzerSettings.psd1' -ReportSummary
+          if ($Results) {
+              $Results | Format-Table -AutoSize
+              throw "PSScriptAnalyzer found $($Results.Count) issue(s)."
+          }
+          Write-Host "PSScriptAnalyzer: No issues found." -ForegroundColor Green
+
+      - name: Run Pester tests
+        run: |
+          $PesterConfig = New-PesterConfiguration
+          $PesterConfig.Run.Path = './Tests'
+          $PesterConfig.Run.Exit = $true
+          $PesterConfig.Output.Verbosity = 'Detailed'
+          $PesterConfig.TestResult.Enabled = $true
+          $PesterConfig.TestResult.OutputPath = './TestResults.xml'
+          $PesterConfig.TestResult.OutputFormat = 'NUnitXml'
+          Invoke-Pester -Configuration $PesterConfig
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-windows-latest-ps51
           path: ./TestResults.xml
 
   build-and-publish:
     name: Build & Publish
-    needs: test
+    needs: [test-pwsh, test-ps51]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
