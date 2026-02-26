@@ -64,7 +64,7 @@ jobs:
           path: ./dist/YFridelance.PS.ModuleFactory/
 
       - name: Publish to PowerShell Gallery
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && github.event_name == 'push'
         shell: pwsh
         env:
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
