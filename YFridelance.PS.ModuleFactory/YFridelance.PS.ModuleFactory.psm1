@@ -7,7 +7,7 @@
 $ModuleRoot = $PSScriptRoot
 
 # Module-scope constants (not exported, used by private functions)
-$Script:ModuleFactoryVersion = '0.1.0'
+$Script:ModuleFactoryVersion = '0.1.1'
 $Script:SupportedManifestFields = @(
     'FunctionsToExport'
     'AliasesToExport'

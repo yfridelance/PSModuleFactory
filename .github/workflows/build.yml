@@ -63,6 +63,18 @@ jobs:
           name: YFridelance.PS.ModuleFactory
           path: ./dist/YFridelance.PS.ModuleFactory/
 
+      - name: Publish to PowerShell Gallery
+        if: matrix.os == 'ubuntu-latest'
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          $ModulePath = './dist/YFridelance.PS.ModuleFactory'
+          if (-not (Test-Path $ModulePath)) {
+              throw "Build output not found: $ModulePath"
+          }
+          Publish-Module -Path $ModulePath -ApiKey $env:PSGALLERY_API_KEY -Repository PSGallery 
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
