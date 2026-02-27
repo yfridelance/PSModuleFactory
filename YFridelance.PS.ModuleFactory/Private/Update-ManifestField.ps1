@@ -204,8 +204,9 @@
     $UpdatedText = $UpdatedText -replace "`n", "`r`n"
 
     # Write back with UTF-8 BOM
+    $Encoding = if ($null -ne $Script:DefaultEncoding) { $Script:DefaultEncoding } else { [System.Text.UTF8Encoding]::new($true) }
     try {
-        [System.IO.File]::WriteAllText($ManifestPath, $UpdatedText, $Script:DefaultEncoding)
+        [System.IO.File]::WriteAllText($ManifestPath, $UpdatedText, $Encoding)
     }
     catch {
         Write-Error "Update-ManifestField: Failed to write updated manifest '$ManifestPath': $_"
